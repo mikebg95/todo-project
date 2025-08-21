@@ -23,7 +23,8 @@ public class CorsConfig {
                 "http://localhost:8080",
                 "http://127.0.0.1:8080",
                 "http://localhost:8084",
-                "http://127.0.0.1:8084"
+                "http://127.0.0.1:8084",
+                "http://51.21.192.54"
         ));
 
         // Methods & headers your frontend might use
