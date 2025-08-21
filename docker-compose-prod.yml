@@ -9,6 +9,8 @@ services:
     image: ghcr.io/mikebg95/todo-frontend:${FRONTEND_VERSION}
     pull_policy: always
     ports: ["80:80"]
+    depends_on: ["backend"]
+
 
   backend:
     image: ghcr.io/mikebg95/todo-backend:${BACKEND_VERSION}
