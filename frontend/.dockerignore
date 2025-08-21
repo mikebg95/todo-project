@@ -1,0 +1,22 @@
+# dependencies (don’t copy host node_modules)
+node_modules
+
+# build output from your host (container will build its own)
+dist
+
+# VCS & IDE noise
+.git
+.gitignore
+.vscode
+.idea
+.DS_Store
+
+# env files (don’t bake secrets)
+.env
+.env.*
+
+# logs & debug junk
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

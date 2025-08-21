@@ -1,0 +1,47 @@
+# ========================
+# Java / Spring Boot
+# ========================
+/backend/target/
+/backend/.mvn/wrapper/maven-wrapper.jar
+/backend/.mvn/wrapper/maven-wrapper.properties
+/backend/.mvn/wrapper/maven-wrapperDownloader.java
+/backend/mvnw
+/backend/mvnw.cmd
+
+# ========================
+# Node / Vue
+# ========================
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.env.local
+/frontend/.env.*.local
+
+# ========================
+# IntelliJ / JetBrains
+# ========================
+.idea/
+*.iml
+out/
+
+# ========================
+# WebStorm / VSCode
+# ========================
+.vscode/
+
+# ========================
+# OS-specific
+# ========================
+.DS_Store
+Thumbs.db
+
+# ========================
+# Logs
+# ========================
+*.log
+logs/
+
+# ========================
+# Docker
+# ========================
+/docker-data/    # if you mount local volumes for Mongo, etc.
+*.env            # if you use environment variable files

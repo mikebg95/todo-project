@@ -1,4 +1,4 @@
-const apiPath = 'http://localhost:8080/items';
+const apiPath = 'api/items';
 
 export default {
    async getAllItems() {
