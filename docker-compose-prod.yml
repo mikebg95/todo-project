@@ -16,12 +16,12 @@ services:
     depends_on: ["mongodb"]
 
   frontend:
-    image: ghcr.io/mikebg95/todo-frontend:1.0
+    image: ghcr.io/mikebg95/todo-frontend:${FRONTEND_VERSION}
     pull_policy: always
     ports: ["8084:80"]
 
   backend:
-    image: ghcr.io/mikebg95/todo-backend:1.0
+    image: ghcr.io/mikebg95/todo-backend:${BACKEND_VERSION}
     pull_policy: always
     ports: ["8082:8082"]
     depends_on: ["mongodb"]

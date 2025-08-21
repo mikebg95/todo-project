@@ -21,14 +21,14 @@ services:
   frontend:
     build:
       context: ./frontend
-    image: todo-frontend:1.0
+    image: todo-frontend:${FRONTEND_VERSION}
     ports:
       - 8084:80
   
   backend:
     build:
       context: ./backend
-    image: todo-backend:1.0
+    image: todo-backend:${BACKEND_VERSION}
     ports:
       - 8082:8082
     depends_on:
