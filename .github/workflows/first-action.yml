@@ -10,5 +10,9 @@ jobs:
     steps: 
       - name: Print greeting
         run: echo "Hello world!"
+      - name: Pring random stuff
+        run: |
+            echo "First random line"
+            echo "Second random line"
       - name: Print goodbye
         run: echo "Done - Bye!"
