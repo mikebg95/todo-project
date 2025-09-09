@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
+// web slice test class for the itemController
 @WebMvcTest(ItemController.class)
 public class ItemControllerTest {
     @Autowired
