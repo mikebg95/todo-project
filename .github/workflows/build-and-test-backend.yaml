@@ -2,8 +2,7 @@ name: Build & Test Backend
 
 on: 
   push:
-    paths:
-      - 'backend/**'
+    paths: [backend/**]
   pull_request:
     paths: [backend/**]
 
