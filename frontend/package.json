@@ -9,13 +9,19 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint src --ext .js,.ts,.vue"
   },
   "dependencies": {
     "vue": "^3.5.18"
   },
   "devDependencies": {
+    "@eslint/js": "^9.35.0",
     "@vitejs/plugin-vue": "^6.0.1",
+    "eslint": "^9.35.0",
+    "eslint-plugin-vue": "^10.4.0",
+    "globals": "^16.4.0",
+    "lint": "^0.8.19",
     "vite": "^7.0.6",
     "vite-plugin-vue-devtools": "^8.0.0"
   }
