@@ -6,7 +6,15 @@ on:
 jobs:
   info:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Output Github context  
-        run: echo "${{ toJSON(github) }}" > event.json
+      - name: Write GitHub context to file
+        run: |
+          printf '%s' '${{ toJSON(github) }}' > event.json
+          ls -l event.json
+
+      - name: Upload JSON artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-context
+          path: event.json
+          retention-days: 7
