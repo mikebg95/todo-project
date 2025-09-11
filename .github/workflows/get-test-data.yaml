@@ -11,5 +11,5 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      - name: Output Github context
+      - name: Output Github context  
         run: echo "${{ toJSON(github) }}" > event.json
