@@ -12,5 +12,5 @@ jobs:
 
     steps:
       - name: Output Github context
-        run: echo "${{ github }}"
+        run: echo "${{ toJSON(github) }}"
   
