@@ -20,6 +20,7 @@ export default defineConfig({
     },
   },
   resolve: {
+    // needed for vitest
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
