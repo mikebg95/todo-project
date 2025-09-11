@@ -1,13 +1,15 @@
 name: Test Workflow for getting Github data
 
 on:
-  workflow_dispatch:
+  issues:
 
 jobs:
   info:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - name: Output Github context
-        run: echo "${{ toJSON(github) }}"
-  
+        run: echo "${{ toJSON(github) }}" > event.json
