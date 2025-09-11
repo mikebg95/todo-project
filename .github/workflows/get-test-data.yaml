@@ -1,0 +1,16 @@
+name: Test Workflow for getting Github data
+
+on:
+  workflow_dispatch:
+
+jobs:
+  info:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Output Github context
+        run: echo "${{ github }}"
+  
