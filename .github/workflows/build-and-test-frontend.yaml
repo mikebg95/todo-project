@@ -52,5 +52,5 @@ jobs:
           name: dist-files
 
       - name: Output JS file name
-        run: echo "JS file: ${{ steps.publish.outputs.script-file }} "
+        run: echo "JS file ${{ steps.publish.outputs.script-file }}"
 
