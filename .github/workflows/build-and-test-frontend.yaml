@@ -35,3 +35,9 @@ jobs:
 
       - name: Build frontend
         run: npm run build
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with: 
+          name: dist-files
+          path: frontend/dist
