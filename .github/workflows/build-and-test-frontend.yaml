@@ -14,6 +14,9 @@ jobs:
     defaults:
       run:
         working-directory: frontend
+    
+    outputs:
+      script-file: ${{ steps.publish.outputs.script-file }}
 
     steps: 
       - uses: actions/checkout@v4
@@ -33,8 +36,21 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+      - name: Publish JS file name
+        id: publish
+        run: find frontend/dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';'
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with: 
           name: dist-files
           path: frontend/dist
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v5
+        with:
+          name: dist-files
+
+      - name: Output JS file name
+        run: echo "JS file: ${{ steps.publish.outputs.script-file }} "
+
