@@ -17,7 +17,8 @@ class TodoAppApplicationTests {
 
     @DynamicPropertySource
     static void mongoProps(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.mongodb.uri", () -> mongo.getConnectionString());
+        registry.add("spring.data.mongodb.uri", mongo::getConnectionString);
+        registry.add("spring.data.mongodb.database", () -> "testdb");
     }
 
     @Test
