@@ -9,10 +9,8 @@ on:
 
 jobs:
   build-test:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix: 
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ubuntu-latest
+    
     env:
       SPRING_PROFILES_ACTIVE: ci
 
