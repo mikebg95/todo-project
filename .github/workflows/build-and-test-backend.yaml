@@ -13,6 +13,8 @@ jobs:
     strategy:
       matrix: 
         os: [ubuntu-latest, windows-latest, macos-latest]
+    env:
+      SPRING_PROFILES_ACTIVE: ci
 
     defaults:
       run:
