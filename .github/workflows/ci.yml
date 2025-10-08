@@ -64,16 +64,27 @@ jobs:
 
   push-docker-images:
       runs-on: ubuntu-latest
-      needs: [build-docker-image-frontend, build-docker-image-backend]
+      needs: [build-test-frontend, build-test-backend]
       steps:
       - uses: actions/checkout@v4
+      
       - name: Log in to GHCR
         uses: docker/login-action@v3 
         with: 
           registry: ghcr.io 
           username: ${{ github.actor }} 
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push frontend image
-        run: docker push ghcr.io/${{ github.repository }}/frontend:latest
-      - name: Push backend image
-        run: docker push ghcr.io/${{ github.repository }}/backend:latest
+          
+      - name: Build & push frontend image
+        uses: docker/build-push-action@v5
+        with: 
+          context: ./frontend
+          push: true
+          tags: ghcr.io/${{ github.repository }}/frontend:latest
+
+      - name: Build & push backend image
+        uses: docker/build-push-action@v5
+        with: 
+          context: ./backend
+          push: true
+          tags: ghcr.io/${{ github.repository }}/backend:latest
