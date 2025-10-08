@@ -2,7 +2,8 @@ services:
   - name: todo-backend
     type: web
     runtime: image
-    image: { url: ghcr.io/mikebg95/todo-project/todo-backend:latest }
+    image:
+      url: ghcr.io/mikebg95/todo-project/todo-backend:latest
     plan: free
     region: frankfurt
     envVars:
@@ -14,10 +15,12 @@ services:
   - name: todo-frontend
     type: web
     runtime: image
-    image: { url: ghcr.io/mikebg95/todo-project/todo-frontend:latest }
+    image:
+      url: ghcr.io/mikebg95/todo-project/todo-frontend:latest
     plan: free
     region: frankfurt
     envVars:
       - { key: PORT, value: 80 }
+      # After backend deploys, set this to the backend’s public URL (with trailing slash) and redeploy frontend
       - { key: BACKEND_URL, value: https://REPLACE_WITH_BACKEND_HOST/ }
     healthCheckPath: /
