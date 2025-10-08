@@ -1,20 +1,12 @@
 services:
   backend:
-    build:
-      context: ./backend
     image: todo-backend:${BACKEND_VERSION}
-    ports:
-      - "8082:8082"
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
 
   frontend:
-    build:
-      context: ./frontend
     image: todo-frontend:${FRONTEND_VERSION}
-    ports:
-      - "8084:80"
     depends_on:
       - backend
     # Optional: uncomment if your Vue app needs to know backend URL
