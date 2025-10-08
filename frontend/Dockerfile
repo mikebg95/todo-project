@@ -30,7 +30,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # copy nginx.conf file into the image where nginx looks for it
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 
 # copy the built files (called "build" in first stage) into the nginx stage
 # /usr/share/nginx/html is nginx's "public" folder
