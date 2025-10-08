@@ -7,10 +7,12 @@ services:
     plan: free
     region: frankfurt
     envVars:
-      - { key: PORT, value: 8082 }
+      - { key: PORT, value: 8080 }
+      - { key: SERVER_PORT, value: 8080 }
       - { key: SPRING_PROFILES_ACTIVE, value: dev }
-      - { key: SPRING_DATA_MONGODB_URI, sync: false }
-    healthCheckPath: /actuator/health
+      - { key: SPRING_DATA_MONGODB_URI, sync: false }  # set value in dashboard
+    # remove this if you don't have actuator:
+    # healthCheckPath: /actuator/health
 
   - name: todo-frontend
     type: web
@@ -21,6 +23,5 @@ services:
     region: frankfurt
     envVars:
       - { key: PORT, value: 80 }
-      # After backend deploys, set this to the backend’s public URL (with trailing slash) and redeploy frontend
       - { key: BACKEND_URL, value: https://REPLACE_WITH_BACKEND_HOST/ }
     healthCheckPath: /
