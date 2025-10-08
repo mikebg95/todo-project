@@ -1,31 +1,41 @@
 services:
-  # ---------- Backend (private HTTP service) ----------
-  - type: privateService
-    name: todo-backend
-    env: docker
+  # -------- Backend (private HTTP service) --------
+  - name: todo-backend
+    type: pserv                 # private service
+    runtime: image              # pull a prebuilt image from a registry
     image:
       url: ghcr.io/mikebg95/todo-project/todo-backend:latest
-    plan: starter
+      # If your GHCR repo is private, first create a Registry Credential in Render,
+      # then uncomment the next 3 lines and set the name to match it:
+      # creds:
+      #   fromRegistryCreds:
+      #     name: ghcr-credentials
     region: frankfurt
-    autoDeploy: yes
-    healthCheckPath: /actuator/health
+    plan: starter
     envVars:
+      - key: PORT               # port your app listens on inside the container
+        value: 8082
       - key: SPRING_PROFILES_ACTIVE
         value: prod
       - key: SPRING_DATA_MONGODB_URI
-        sync: false   # add value manually in Render dashboard later
+        sync: false             # provide the value in the Render dashboard on first apply
 
-  # ---------- Frontend (public web service) ----------
-  - type: web
-    name: todo-frontend
-    env: docker
+  # -------- Frontend (public web service) --------
+  - name: todo-frontend
+    type: web
+    runtime: image
     image:
       url: ghcr.io/mikebg95/todo-project/todo-frontend:latest
-    plan: starter
+      # creds:
+      #   fromRegistryCreds:
+      #     name: ghcr-credentials
     region: frankfurt
-    autoDeploy: yes
-    healthCheckPath: /
+    plan: starter
     envVars:
-      # Used by nginx.conf for API proxy
+      - key: PORT               # nginx listens on 80 in your image
+        value: 80
+      # nginx.conf template uses this to proxy /api/* to the backend
+      # keep the trailing slash
       - key: BACKEND_URL
         value: http://todo-backend:8082/
+    healthCheckPath: /          # web services only
