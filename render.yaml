@@ -1,41 +1,23 @@
 services:
-  # -------- Backend (private HTTP service) --------
   - name: todo-backend
-    type: pserv                 # private service
-    runtime: image              # pull a prebuilt image from a registry
-    image:
-      url: ghcr.io/mikebg95/todo-project/todo-backend:latest
-      # If your GHCR repo is private, first create a Registry Credential in Render,
-      # then uncomment the next 3 lines and set the name to match it:
-      # creds:
-      #   fromRegistryCreds:
-      #     name: ghcr-credentials
+    type: web
+    runtime: image
+    image: { url: ghcr.io/mikebg95/todo-project/todo-backend:latest }
+    plan: free
     region: frankfurt
-    plan: starter
     envVars:
-      - key: PORT               # port your app listens on inside the container
-        value: 8082
-      - key: SPRING_PROFILES_ACTIVE
-        value: prod
-      - key: SPRING_DATA_MONGODB_URI
-        sync: false             # provide the value in the Render dashboard on first apply
+      - { key: PORT, value: 8082 }
+      - { key: SPRING_PROFILES_ACTIVE, value: prod }
+      - { key: SPRING_DATA_MONGODB_URI, sync: false }
+    healthCheckPath: /actuator/health
 
-  # -------- Frontend (public web service) --------
   - name: todo-frontend
     type: web
     runtime: image
-    image:
-      url: ghcr.io/mikebg95/todo-project/todo-frontend:latest
-      # creds:
-      #   fromRegistryCreds:
-      #     name: ghcr-credentials
+    image: { url: ghcr.io/mikebg95/todo-project/todo-frontend:latest }
+    plan: free
     region: frankfurt
-    plan: starter
     envVars:
-      - key: PORT               # nginx listens on 80 in your image
-        value: 80
-      # nginx.conf template uses this to proxy /api/* to the backend
-      # keep the trailing slash
-      - key: BACKEND_URL
-        value: http://todo-backend:8082/
-    healthCheckPath: /          # web services only
+      - { key: PORT, value: 80 }
+      - { key: BACKEND_URL, value: https://REPLACE_WITH_BACKEND_HOST/ }
+    healthCheckPath: /
