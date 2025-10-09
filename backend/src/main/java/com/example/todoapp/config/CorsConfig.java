@@ -18,6 +18,7 @@ public class CorsConfig {
 
         // Allow your Vite dev server origins
         config.setAllowedOrigins(Arrays.asList(
+                "https://todo-frontend-8y4v.onrender.com",
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
                 "http://localhost:8080",
