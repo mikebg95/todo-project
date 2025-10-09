@@ -47,28 +47,46 @@ jobs:
       run: npm run build
 
   build-push-docker-images:
-      runs-on: ubuntu-latest
-      needs: [build-test-frontend, build-test-backend]
-      steps:
-      - uses: actions/checkout@v4
-      
-      - name: Log in to GHCR
-        uses: docker/login-action@v3 
-        with: 
-          registry: ghcr.io 
-          username: ${{ github.actor }} 
-          password: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Build & push frontend image
-        uses: docker/build-push-action@v5
-        with: 
-          context: ./frontend
-          push: true
-          tags: ghcr.io/${{ github.repository }}/todo-frontend:dev
+    runs-on: ubuntu-latest
+    needs: [build-test-frontend, build-test-backend]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Log in to GHCR
+      uses: docker/login-action@v3 
+      with: 
+        registry: ghcr.io 
+        username: ${{ github.actor }} 
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Build & push frontend image
+      uses: docker/build-push-action@v5
+      with: 
+        context: ./frontend
+        push: true
+        tags: ghcr.io/${{ github.repository }}/todo-frontend:dev
 
-      - name: Build & push backend image
-        uses: docker/build-push-action@v5
-        with: 
-          context: ./backend
-          push: true
-          tags: ghcr.io/${{ github.repository }}/todo-backend:dev
+    - name: Build & push backend image
+      uses: docker/build-push-action@v5
+      with: 
+        context: ./backend
+        push: true
+        tags: ghcr.io/${{ github.repository }}/todo-backend:dev
+
+  deploy-to-render:
+    runs-on: ubuntu-latest
+    needs: build-push-docker-images
+    steps:
+      - name: Deploy backend to Render
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.RENDER_BACKEND_SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
+          wait-for-success: true
+
+      - name: Deploy frontend to Render
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.RENDER_FRONTEND_SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
+          wait-for-success: true
