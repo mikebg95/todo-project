@@ -1,4 +1,5 @@
 services:
+  # 🧩 BACKEND (Spring Boot)
   - name: todo-backend
     type: web
     runtime: image
@@ -6,13 +7,15 @@ services:
       url: ghcr.io/mikebg95/todo-project/todo-backend:latest
     plan: free
     region: frankfurt
-    port: 8082
+    startCommand: "java -Dserver.port=$PORT -jar /app/app.jar"
     envVars:
       - { key: SPRING_PROFILES_ACTIVE, value: dev }
-      - { key: SPRING_DATA_MONGODB_URI, sync: false }  # set value in dashboard
-    # uncomment when actuator works
+      - { key: SPRING_DATA_MONGODB_URI, sync: false }  # set in Render dashboard
+    # Uncomment if you have actuator:
     # healthCheckPath: /actuator/health
 
+
+  # 🧩 FRONTEND (Nginx serving built files)
   - name: todo-frontend
     type: web
     runtime: image
@@ -20,14 +23,11 @@ services:
       url: ghcr.io/mikebg95/todo-project/todo-frontend:latest
     plan: free
     region: frankfurt
-    port: 80
     envVars:
-      - { key: BACKEND_URL, value: https://todo-backend-w132.onrender.com/ }
-
-    # Option B (alternative): private network; then update nginx template to use http://$BACKEND_HOSTPORT/
-    # - key: BACKEND_HOSTPORT
-    #   fromService:
-    #     name: todo-backend
-    #     type: web
-    #     property: hostport
+      # INTERNAL (private networking)
+      - key: BACKEND_HOSTPORT
+        fromService:
+          name: todo-backend
+          type: web
+          property: hostport
     healthCheckPath: /
