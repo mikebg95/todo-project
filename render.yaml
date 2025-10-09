@@ -24,8 +24,6 @@ services:
     plan: free
     region: frankfurt
     envVars:
-      # INTERNAL (private networking)
-      envVars:
       - key: BACKEND_HOST
         fromService:
           name: todo-backend
