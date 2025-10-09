@@ -6,12 +6,11 @@ services:
       url: ghcr.io/mikebg95/todo-project/todo-backend:latest
     plan: free
     region: frankfurt
+    port: 8082
     envVars:
-      - { key: PORT, value: 8080 }
-      - { key: SERVER_PORT, value: 8080 }
       - { key: SPRING_PROFILES_ACTIVE, value: dev }
       - { key: SPRING_DATA_MONGODB_URI, sync: false }  # set value in dashboard
-    # remove this if you don't have actuator:
+    # uncomment when actuator works
     # healthCheckPath: /actuator/health
 
   - name: todo-frontend
@@ -21,7 +20,14 @@ services:
       url: ghcr.io/mikebg95/todo-project/todo-frontend:latest
     plan: free
     region: frankfurt
+    port: 80
     envVars:
-      - { key: PORT, value: 80 }
-      - { key: BACKEND_URL, value: https://REPLACE_WITH_BACKEND_HOST/ }
+      - { key: BACKEND_URL, value: https://todo-backend-w132.onrender.com/ }
+
+    # Option B (alternative): private network; then update nginx template to use http://$BACKEND_HOSTPORT/
+    # - key: BACKEND_HOSTPORT
+    #   fromService:
+    #     name: todo-backend
+    #     type: web
+    #     property: hostport
     healthCheckPath: /
