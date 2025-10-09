@@ -6,7 +6,6 @@ services:
       url: ghcr.io/mikebg95/todo-project/todo-backend:dev
     plan: free
     region: frankfurt
-    startCommand: "java -Dserver.port=$PORT -jar /app/app.jar"
     envVars:
       - { key: SPRING_PROFILES_ACTIVE, value: dev }
       - { key: SPRING_DATA_MONGODB_URI, sync: false }

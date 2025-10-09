@@ -24,4 +24,4 @@ COPY --from=build /src/target/*.jar /app/app.jar
 USER 10001:10001
 
 EXPOSE 8082
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+ENTRYPOINT ["sh","-c","java -Dserver.port=${PORT:-8082} -jar /app/app.jar"]
