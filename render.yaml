@@ -1,5 +1,4 @@
 services:
-  # 🧩 BACKEND (Spring Boot)
   - name: todo-backend
     type: web
     runtime: image
@@ -10,12 +9,9 @@ services:
     startCommand: "java -Dserver.port=$PORT -jar /app/app.jar"
     envVars:
       - { key: SPRING_PROFILES_ACTIVE, value: dev }
-      - { key: SPRING_DATA_MONGODB_URI, sync: false }  # set in Render dashboard
-    # Uncomment if you have actuator:
+      - { key: SPRING_DATA_MONGODB_URI, sync: false }
     # healthCheckPath: /actuator/health
 
-
-  # 🧩 FRONTEND (Nginx serving built files)
   - name: todo-frontend
     type: web
     runtime: image
@@ -24,14 +20,9 @@ services:
     plan: free
     region: frankfurt
     envVars:
-      - key: BACKEND_HOST
+      - key: BACKEND_HOSTPORT
         fromService:
           name: todo-backend
           type: web
-          property: host
-      - key: BACKEND_PORT
-        fromService:
-          name: todo-backend
-          type: web
-          property: port
-        healthCheckPath: /
+          property: hostport
+    healthCheckPath: /
