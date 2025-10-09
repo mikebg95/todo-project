@@ -30,7 +30,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # ensure no stale config overrides your template
-RUN rm -f /etc/nginx/conf.d/default.conf
+RUN rm -f /etc/nginx/conf.d/*
 
 # copy nginx.conf file into the image where nginx looks for it
 COPY nginx.conf /etc/nginx/templates/default.conf.template
