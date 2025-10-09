@@ -25,9 +25,15 @@ services:
     region: frankfurt
     envVars:
       # INTERNAL (private networking)
-      - key: BACKEND_HOSTPORT
+      envVars:
+      - key: BACKEND_HOST
         fromService:
           name: todo-backend
           type: web
-          property: hostport
-    healthCheckPath: /
+          property: host
+      - key: BACKEND_PORT
+        fromService:
+          name: todo-backend
+          type: web
+          property: port
+        healthCheckPath: /
