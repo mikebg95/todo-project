@@ -1,4 +1,5 @@
 services:
+  # BACKEND (Spring Boot)
   - name: todo-backend
     type: web
     runtime: image
@@ -9,8 +10,10 @@ services:
     envVars:
       - { key: SPRING_PROFILES_ACTIVE, value: dev }
       - { key: SPRING_DATA_MONGODB_URI, sync: false }
+    # If you use Actuator, you can add:
     # healthCheckPath: /actuator/health
 
+  # FRONTEND (Nginx serving built files)
   - name: todo-frontend
     type: web
     runtime: image
@@ -19,9 +22,7 @@ services:
     plan: free
     region: frankfurt
     envVars:
-      - key: BACKEND_HOSTPORT
-        fromService:
-          name: todo-backend
-          type: web
-          property: hostport
+      # Use the backend's PUBLIC URL (works regardless of private DNS)
+      - key: BACKEND_URL
+        value: https://todo-backend-w132.onrender.com/
     healthCheckPath: /
