@@ -22,5 +22,19 @@ services:
     depends_on:
       - mongodb
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: local-keycloak
+    ports: ["8080:8080"]
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_HOSTNAME: localhost
+      KC_HTTP_ENABLED: "true"
+    command: ["start-dev"]
+    volumes:
+      - keycloak-data:/opt/keycloak/data
+
 volumes:
   mongo-data:
+  keycloak-data:
