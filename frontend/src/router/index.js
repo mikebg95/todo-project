@@ -6,6 +6,7 @@ import DashboardAdmin from '../views/DashboardAdminView.vue'
 import Forbidden from '../views/ForbiddenView.vue'
 import PageNotFound from '../views/PageNotFoundView.vue'
 import Todo from "@/views/TodoView.vue";
+import Profile from "@/views/ProfileView.vue"
 
 const routes = [
     { path: '/', component: Home },
@@ -13,6 +14,7 @@ const routes = [
     { path: '/dashboard', component: Dashboard },
     { path: '/forbidden', component: Forbidden },
     { path: '/not-found', component: PageNotFound },
+    { path: '/profile', component: Profile },
     { path: '/todo', component: Todo },
 ]
 
