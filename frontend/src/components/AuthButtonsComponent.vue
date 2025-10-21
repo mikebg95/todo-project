@@ -8,7 +8,10 @@ const signup = () => keycloak.register();
 
 <template>
   <div style="display:flex; gap:8px; align-items:center">
-    <router-link to="/profile" v-if="keycloak.authenticated">👋 {{ keycloak.tokenParsed?.preferred_username }}</router-link>
+    <router-link to="/profile" v-if="keycloak.authenticated" class="profile-link">
+      <CircleUser />
+      {{ keycloak.tokenParsed?.preferred_username }}
+    </router-link>
     <button v-if="!keycloak.authenticated" @click="login">Login</button>
     <button v-if="!keycloak.authenticated" @click="signup">Sign Up</button>
     <button v-else @click="logout">Logout</button>
@@ -16,5 +19,13 @@ const signup = () => keycloak.register();
 </template>
 
 <style scoped>
+.profile-link {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
 
+  svg {
+    margin-right: 4px;
+  }
+}
 </style>

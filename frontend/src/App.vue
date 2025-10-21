@@ -1,14 +1,18 @@
 <script setup>
-
 import NavbarComponent from "@/components/NavbarComponent.vue";
+
 </script>
 
 <template>
-  <div>
+  <div class="app-container">
     <NavbarComponent />
 
-    <router-view />
+    <router-view class="container" />
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.container {
+  padding: 16px;
+}
+</style>

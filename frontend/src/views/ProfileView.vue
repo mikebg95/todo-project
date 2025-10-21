@@ -5,7 +5,7 @@ const store = useUserStore();
 
 <template>
   <div>
-    <h2>User Info</h2>
+    <p class="title">User Info</p>
     <p><strong>Username:</strong> {{ store.username }}</p>
     <p><strong>First name:</strong> {{ store.firstName }}</p>
     <p><strong>Last name:</strong> {{ store.lastName }}</p>
