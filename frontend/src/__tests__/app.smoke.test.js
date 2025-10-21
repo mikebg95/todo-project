@@ -1,3 +1,5 @@
+/* eslint-env vitest */
+
 import { mount, RouterLinkStub } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
 import { createRouter, createMemoryHistory } from 'vue-router'
