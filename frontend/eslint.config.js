@@ -20,6 +20,7 @@ export default defineConfig([
         describe: true,
         beforeEach: true,
         afterEach: true,
+        vi: true,
       },
     },
   },
