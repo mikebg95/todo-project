@@ -1,7 +1,10 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
+import { createApp } from "vue";
+import App from "./App.vue";
+import router from "./router";
+import keycloak from "./auth/keycloak";
 
-const app = createApp(App)
-app.use(router)
-app.mount('#app')
+keycloak.init({ onLoad: "check-sso", pkceMethod: "S256" }).then(() => {
+    const app = createApp(App);
+    app.use(router);
+    app.mount("#app");
+});
