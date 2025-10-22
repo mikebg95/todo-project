@@ -14,7 +14,9 @@ keycloak.init({
     pkceMethod: "S256",
     checkLoginIframe: false
 })
-    .then(() => {
+.then(() => {
+    console.log("Keycloak initialized");
+    console.log("authServerUrl:", keycloak.authServerUrl);
     const app = createApp(App);
 
     app.use(router);
