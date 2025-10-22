@@ -1,7 +1,8 @@
-import keycloak from '@/auth/keycloak'; // where you init keycloak
+import keycloak from '@/auth/keycloak';
+import router from '@/router';
 
 async function getValidToken() {
-    await keycloak.updateToken(30); // refresh if expiring in 30s
+    await keycloak.updateToken(30).catch(() => {});
     if (!keycloak.authenticated) throw new Error('Not authenticated');
     return keycloak.token;
 }
@@ -15,8 +16,21 @@ export async function apiFetch(path, options = {}) {
 
     const res = await fetch(path, { ...options, headers });
 
+    // --- minimal 401 / 403 handling ---
+    if (res.status === 401) {
+        // Token invalid or expired → re-login
+        keycloak.login({ redirectUri: window.location.href });
+        return;
+    }
+
+    if (res.status === 403) {
+        // Authenticated but not allowed → redirect to Forbidden page
+        router.push('/forbidden');
+        return;
+    }
+    // ----------------------------------
+
     if (!res.ok) {
-        // Optional: if (res.status === 401) keycloak.login();
         throw new Error(`${options.method || 'GET'} ${path} -> ${res.status}`);
     }
 
