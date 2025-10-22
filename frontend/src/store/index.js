@@ -10,6 +10,7 @@ export const useUserStore = defineStore('user', {
             lastName: "",
             email: "",
         },
+        loading: false,
     }),
 
     actions: {
@@ -24,6 +25,9 @@ export const useUserStore = defineStore('user', {
                 lastName: tokenParsed?.family_name || "",
                 email: tokenParsed?.email || "",
             };
+        },
+        setLoading(loading) {
+            this.isLoading = loading;
         },
     },
 });
