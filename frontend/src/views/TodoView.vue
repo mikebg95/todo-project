@@ -7,7 +7,6 @@ const newItem = ref('')
 const error = ref('')
 
 async function loadItems() {
-  console.log("loadItems")
   error.value = ''
   try {
     items.value = await ItemService.getAllItems()

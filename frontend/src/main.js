@@ -15,9 +15,24 @@ keycloak.init({
     checkLoginIframe: false
 })
 .then(() => {
-    console.log("Keycloak initialized");
-    console.log("authServerUrl:", keycloak.authServerUrl);
     const app = createApp(App);
+
+    console.log("tokenParsed:")
+    console.log(keycloak.tokenParsed)
+    console.log("")
+
+    console.log("token:")
+    console.log(keycloak.token)
+    console.log("")
+
+    console.log("idToken")
+    console.log(keycloak.idToken)
+    console.log("")
+
+    console.log("refreshToken")
+    console.log(keycloak.refreshToken)
+    console.log("")
+
 
     app.use(router);
     app.use(pinia);
