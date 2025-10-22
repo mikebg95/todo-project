@@ -18,6 +18,14 @@ RUN npm ci
 # except for things in .dockerignore
 COPY . .
 
+# Accept Vite build-time args and expose to the build
+ARG VITE_KEYCLOAK_URL
+ARG VITE_KEYCLOAK_REALM
+ARG VITE_KEYCLOAK_CLIENT_ID
+ENV VITE_KEYCLOAK_URL=${VITE_KEYCLOAK_URL}
+ENV VITE_KEYCLOAK_REALM=${VITE_KEYCLOAK_REALM}
+ENV VITE_KEYCLOAK_CLIENT_ID=${VITE_KEYCLOAK_CLIENT_ID}
+
 # runs "npm run build" inside the docker image
 # creates /dist folder
 # compiles, bundles and minifies app for production
