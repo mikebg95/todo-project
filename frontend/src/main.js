@@ -9,7 +9,12 @@ import * as lucide from "lucide-vue-next"; // ✅ import all Lucide icons
 
 const pinia = createPinia();
 
-keycloak.init({ onLoad: "check-sso", pkceMethod: "S256" }).then(() => {
+keycloak.init({
+    onLoad: "check-sso",
+    pkceMethod: "S256",
+    checkLoginIframe: false
+})
+    .then(() => {
     const app = createApp(App);
 
     app.use(router);

@@ -44,7 +44,6 @@ onMounted(loadItems)
 <template>
   <main class="container">
     <h1>Items</h1>
-    <h1>Ana Jessica is the most beautiful girl in the world</h1>
 
     <div v-if="!items.length">No items yet</div>
 
