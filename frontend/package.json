@@ -20,7 +20,8 @@
     "lucide-vue-next": "^0.546.0",
     "pinia": "^3.0.3",
     "vue": "^3.5.18",
-    "vue-router": "^4.6.3"
+    "vue-router": "^4.6.3",
+    "vue3-spinner": "^0.0.17"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
