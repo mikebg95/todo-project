@@ -6,7 +6,7 @@ import Forbidden from '../views/ForbiddenView.vue'
 import PageNotFound from '../views/PageNotFoundView.vue'
 import Todo from "@/views/TodoView.vue";
 import Profile from "@/views/ProfileView.vue"
-import {useUserStore} from "@/store/index.js";
+import {useUserStore} from "@/store/user.js";
 
 const routes = [
     {
