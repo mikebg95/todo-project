@@ -3,7 +3,7 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 import keycloak from "./auth/keycloak";
-import { useUserStore } from "@/store/index.js";
+import { useUserStore } from "@/store/user.js";
 import "@/scss/main.scss";
 import * as lucide from "lucide-vue-next"; // ✅ import all Lucide icons
 

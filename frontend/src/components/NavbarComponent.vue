@@ -1,6 +1,6 @@
 <script setup>
 import AuthButtons from "@/components/AuthButtonsComponent.vue";
-import { useUserStore } from "@/store/index.js";
+import { useUserStore } from "@/store/user.js";
 
 const store = useUserStore();
 </script>

@@ -3,22 +3,26 @@ import { defineStore } from 'pinia';
 export const useUserStore = defineStore('user', {
     state: () => ({
         isAuthenticated: false,
-        userInfo: {
+        user: {
             roles: [],
             username: "",
             firstName: "",
             lastName: "",
             email: "",
         },
-        loading: false,
+        loadingCount: 0,
     }),
+
+    getters: {
+        isLoading: (state) => state.loadingCount > 0,
+    },
 
     actions: {
         setUser(authenticated, roles, tokenParsed) {
             const allowed = ["USER_ROLE", "ADMIN_ROLE"];
             this.isAuthenticated = authenticated;
 
-            this.userInfo = {
+            this.user = {
                 roles: roles.filter(r => allowed.includes(r)),
                 username: tokenParsed?.preferred_username || "",
                 firstName: tokenParsed?.given_name || "",
@@ -26,8 +30,17 @@ export const useUserStore = defineStore('user', {
                 email: tokenParsed?.email || "",
             };
         },
-        setLoading(loading) {
-            this.isLoading = loading;
+
+        startLoading() {
+            this.loadingCount++;
+        },
+
+        stopLoading() {
+            if (this.loadingCount > 0) this.loadingCount--;
+        },
+
+        resetLoading() {
+            this.loadingCount = 0;
         },
     },
 });
