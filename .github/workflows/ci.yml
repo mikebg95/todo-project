@@ -47,14 +47,15 @@ jobs:
       run: npm run lint
     - name: Test Frontend
       run: npm run test
-      
+
     - name: Debug env vars
       run: |
         echo "VITE_KEYCLOAK_URL=${{ env.VITE_KEYCLOAK_URL }}"
         echo "VITE_KEYCLOAK_REALM=${{ env.VITE_KEYCLOAK_REALM }}"
         echo "VITE_KEYCLOAK_CLIENT_ID=${{ env.VITE_KEYCLOAK_CLIENT_ID }}"
-        - name: Build Frontend
-          run: npm run build
+        
+    - name: Build Frontend
+      run: npm run build
 
   build-push-docker-images:
     runs-on: ubuntu-latest
