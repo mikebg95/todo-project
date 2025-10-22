@@ -20,10 +20,7 @@ Object.entries(lucide).forEach(([name, component]) => {
 });
 
 const uiStore = useUiStore();
-
-console.log("Before startLoading →", uiStore.isLoading);
 uiStore.startLoading();
-console.log("After startLoading →", uiStore.isLoading);
 
 keycloak
     .init({
@@ -42,7 +39,5 @@ keycloak
         app.mount("#app");
     })
     .finally(() => {
-        console.log("Before stopLoading →", uiStore.isLoading);
         uiStore.stopLoading();
-        console.log("After stopLoading →", uiStore.isLoading);
     });
