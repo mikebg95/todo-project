@@ -36,7 +36,8 @@ public class ItemController {
     // delete item
     @DeleteMapping("/{id}")
     public void deleteItem(@PathVariable String id) {
-        Item item = itemRepository.findById(id).orElseThrow();
+        Item item = itemRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found"));
         String userId = currentUserService.getUserId();
 
         if (!item.getOwnerId().equals(userId)) {

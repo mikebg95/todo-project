@@ -3,74 +3,142 @@ package com.example.todoapp;
 import com.example.todoapp.controller.ItemController;
 import com.example.todoapp.model.Item;
 import com.example.todoapp.repository.ItemRepository;
+import com.example.todoapp.security.CurrentUserService;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
-// web slice test class for the itemController
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(ItemController.class)
-public class ItemControllerTest {
+class ItemControllerTest {
+
+    private static final String USER_ID = "user-123";
+
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
     private ItemRepository itemRepository;
 
-    @Test
-    public void getAllItems_shouldReturn200AndJsonArray_whenItemsExist() throws Exception {
-        List<Item> items = new ArrayList<>();
-        Item item1 = new Item("Buy milk");
-        item1.setId("1");
-        Item item2 = new Item("Walk dog");
-        item2.setId("2");
-        items.add(item1);
-        items.add(item2);
+    @MockitoBean
+    private CurrentUserService currentUserService;
 
-        given(itemRepository.findAll()).willReturn(items);
+    // ---------- GET /items ----------
+
+    @Test
+    void getAllItems_returnsOnlyCurrentUsersItems() throws Exception {
+        given(currentUserService.getUserId()).willReturn(USER_ID);
+
+        Item i1 = Item.of("Buy milk", USER_ID); i1.setId("1");
+        Item i2 = Item.of("Walk dog", USER_ID); i2.setId("2");
+
+        given(itemRepository.findByOwnerId(USER_ID)).willReturn(List.of(i1, i2));
 
         mockMvc.perform(get("/items"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].id").value("1"))
                 .andExpect(jsonPath("$[0].text").value("Buy milk"))
                 .andExpect(jsonPath("$[1].id").value("2"))
                 .andExpect(jsonPath("$[1].text").value("Walk dog"));
 
-        verify(itemRepository).findAll();
+        verify(itemRepository).findByOwnerId(USER_ID);
     }
 
     @Test
-    public void getAllItems_shouldReturn200AndEmptyArray_whenNoItemsExist() throws Exception {
-        given(itemRepository.findAll()).willReturn(new ArrayList<>());
+    void getAllItems_returnsEmptyArrayWhenNoneExist() throws Exception {
+        given(currentUserService.getUserId()).willReturn(USER_ID);
+        given(itemRepository.findByOwnerId(USER_ID)).willReturn(List.of());
 
         mockMvc.perform(get("/items"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.length()").value(0));
 
-        verify(itemRepository).findAll();
+        verify(itemRepository).findByOwnerId(USER_ID);
     }
 
     @Test
-    public void getAllItems_shouldReturn500_whenRepositoryThrows() throws Exception {
-        given(itemRepository.findAll()).willThrow(new RuntimeException("boom"));
+    void getAllItems_returns500WhenRepositoryThrows() throws Exception {
+        given(currentUserService.getUserId()).willReturn(USER_ID);
+        given(itemRepository.findByOwnerId(USER_ID)).willThrow(new RuntimeException("boom"));
 
         mockMvc.perform(get("/items"))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().contentType("application/json"));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
 
-        verify(itemRepository).findAll();
+        verify(itemRepository).findByOwnerId(USER_ID);
+    }
+
+    // ---------- POST /items ----------
+
+    @Test
+    void addItem_setsOwnerIdFromCurrentUser() throws Exception {
+        given(currentUserService.getUserId()).willReturn(USER_ID);
+        // Let save echo the entity back (optional)
+        ArgumentCaptor<Item> captor = ArgumentCaptor.forClass(Item.class);
+        given(itemRepository.save(any(Item.class))).willAnswer(inv -> inv.getArgument(0));
+
+        mockMvc.perform(post("/items")
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .content("Read book"))
+                .andExpect(status().isOk());
+
+        verify(itemRepository).save(captor.capture());
+        Item saved = captor.getValue();
+        assertThat(saved.getText()).isEqualTo("Read book");
+        assertThat(saved.getOwnerId()).isEqualTo(USER_ID);
+    }
+
+    // ---------- DELETE /items/{id} ----------
+
+    @Test
+    void deleteItem_allowsOwner() throws Exception {
+        given(currentUserService.getUserId()).willReturn(USER_ID);
+        Item item = Item.of("X", USER_ID); item.setId("abc");
+        given(itemRepository.findById("abc")).willReturn(Optional.of(item));
+
+        mockMvc.perform(delete("/items/abc"))
+                .andExpect(status().isOk());
+
+        verify(itemRepository).deleteById("abc");
+    }
+
+    @Test
+    void deleteItem_forbiddenForNonOwner() throws Exception {
+        given(currentUserService.getUserId()).willReturn(USER_ID);
+        Item item = Item.of("X", "someone-else"); item.setId("abc");
+        given(itemRepository.findById("abc")).willReturn(Optional.of(item));
+
+        mockMvc.perform(delete("/items/abc"))
+                .andExpect(status().isForbidden());
+
+        verify(itemRepository, never()).deleteById(anyString());
+    }
+
+    @Test
+    void deleteItem_notFoundWhenMissing() throws Exception {
+        given(currentUserService.getUserId()).willReturn(USER_ID);
+        given(itemRepository.findById("missing")).willReturn(Optional.empty());
+
+        mockMvc.perform(delete("/items/missing"))
+                .andExpect(status().isNotFound());
+
+        verify(itemRepository, never()).deleteById(anyString());
     }
 }
