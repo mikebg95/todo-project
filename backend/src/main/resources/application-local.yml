@@ -2,3 +2,8 @@ spring:
   data:
     mongodb:
       uri: mongodb://admin:pass@localhost:27017/todosdb?authSource=admin
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/todo-project-realm
