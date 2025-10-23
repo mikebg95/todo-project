@@ -23,7 +23,7 @@ public class ItemController {
 
     // get all items
     @GetMapping
-    public List<Item> getAll() {
+    public List<Item> getAllForUser() {
         return itemRepository.findByOwnerId(currentUserService.getUserId());
     }
 
@@ -49,7 +49,7 @@ public class ItemController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN_ROLE')")
     public List<Item> getAllItemsForAdmin() {
         return itemRepository.findAll();
     }

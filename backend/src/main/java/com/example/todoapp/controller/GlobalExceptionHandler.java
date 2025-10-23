@@ -2,6 +2,7 @@ package com.example.todoapp.controller;
 
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,6 +22,17 @@ public class GlobalExceptionHandler {
                         "status", status.value(),
                         "error", status.toString(),
                         "message", Objects.requireNonNull(ex.getReason())
+                ));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
+        return ResponseEntity
+                .status(403)
+                .body(Map.of(
+                        "status", 403,
+                        "error", "Forbidden",
+                        "message", "Access Denied"
                 ));
     }
 
