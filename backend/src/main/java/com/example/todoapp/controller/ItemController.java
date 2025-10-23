@@ -4,6 +4,7 @@ import com.example.todoapp.model.Item;
 import com.example.todoapp.repository.ItemRepository;
 import com.example.todoapp.security.CurrentUserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -45,5 +46,11 @@ public class ItemController {
         }
 
         itemRepository.deleteById(id);
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<Item> getAllItemsForAdmin() {
+        return itemRepository.findAll();
     }
 }
