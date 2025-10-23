@@ -1,9 +1,19 @@
 <script setup>
+import {computed} from "vue";
+import { useUserStore } from "@/store/user";
+import DashboardAdminView from "@/views/DashboardAdminView.vue";
+import DashboardUserView from "@/views/DashboardUserView.vue";
 
+const user = useUserStore();
+
+const isAdmin = computed(() => user.hasRole("ADMIN_ROLE"));
 </script>
 
 <template>
-<h1>Dashboard</h1>
+<div class="container">
+  <DashboardAdminView v-if="isAdmin" />
+  <DashboardUserView v-else />
+</div>
 </template>
 
 <style scoped>

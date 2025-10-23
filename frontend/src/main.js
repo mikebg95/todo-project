@@ -11,8 +11,8 @@ import * as lucide from "lucide-vue-next";
 const pinia = createPinia();
 
 const app = createApp(App);
-app.use(router);
 app.use(pinia);
+app.use(router);
 
 // register lucide icons globally
 Object.entries(lucide).forEach(([name, component]) => {
@@ -35,6 +35,10 @@ keycloak
             keycloak.tokenParsed?.realm_access?.roles || [],
             keycloak.tokenParsed
         );
+
+        if (router.currentRoute.value.path === "/" && userStore.isAuthenticated) {
+            router.replace("/dashboard");
+        }
 
         app.mount("#app");
     })

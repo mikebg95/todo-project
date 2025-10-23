@@ -10,12 +10,7 @@ export const useUserStore = defineStore('user', {
             lastName: "",
             email: "",
         },
-        loadingCount: 0,
     }),
-
-    getters: {
-        isLoading: (state) => state.loadingCount > 0,
-    },
 
     actions: {
         setUser(authenticated, roles, tokenParsed) {
@@ -30,17 +25,14 @@ export const useUserStore = defineStore('user', {
                 email: tokenParsed?.email || "",
             };
         },
-
-        startLoading() {
-            this.loadingCount++;
+        hasRole(role) {
+            return this.user.roles.includes(role);
         },
-
-        stopLoading() {
-            if (this.loadingCount > 0) this.loadingCount--;
+        hasAnyRole(list) {
+            return list.some(r => this.user.roles.includes(r));
         },
-
-        resetLoading() {
-            this.loadingCount = 0;
+        hasAllRoles(list) {
+            return list.every(r => this.user.roles.includes(r));
         },
     },
 });

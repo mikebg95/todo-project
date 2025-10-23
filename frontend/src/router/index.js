@@ -12,6 +12,7 @@ const routes = [
     {
         path: '/',
         component: Home,
+        meta: { requiresAuth: false }
     },
     {
         path: '/info',
@@ -26,10 +27,12 @@ const routes = [
     {
         path: '/forbidden',
         component: Forbidden,
+        meta: { requiresAuth: false }
     },
     {
         path: '/not-found',
         component: PageNotFound,
+        meta: { requiresAuth: false }
     },
     {
         path: '/profile',
