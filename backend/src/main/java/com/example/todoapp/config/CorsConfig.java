@@ -22,8 +22,8 @@ public class CorsConfig {
                 "https://todo-frontend-8y4v.onrender.com",
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
-                "http://localhost:8080",
-                "http://127.0.0.1:8080",
+                "http://localhost:8180",
+                "http://127.0.0.1:8180",
                 "http://localhost:8084",
                 "http://127.0.0.1:8084",
                 "http://51.21.192.54"
