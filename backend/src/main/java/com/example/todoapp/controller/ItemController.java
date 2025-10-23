@@ -4,6 +4,7 @@ import com.example.todoapp.model.Item;
 import com.example.todoapp.repository.ItemRepository;
 import com.example.todoapp.security.CurrentUserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,10 +22,11 @@ public class ItemController {
         this.itemRepository = itemRepository;
     }
 
-    // get all items
+    // get all items for user
     @GetMapping
-    public List<Item> getAllForUser() {
-        return itemRepository.findByOwnerId(currentUserService.getUserId());
+    @PostFilter("filterObject.ownerId == principal.claims['sub']")
+    public List<Item> getAllItemsForUser() {
+        return itemRepository.findAll();
     }
 
     // add item
