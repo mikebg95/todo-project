@@ -3,7 +3,7 @@ import { apiFetch } from './http';
 const apiPath = 'api/items';
 
 export default {
-    getAllItems() {
+    getItems() {
         return apiFetch(apiPath);
     },
 
@@ -20,4 +20,8 @@ export default {
             method: 'DELETE',
         });
     },
+
+    getAllItems() {
+        return apiFetch(`${apiPath}/all`);
+    }
 };

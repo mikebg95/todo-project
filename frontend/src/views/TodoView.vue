@@ -9,7 +9,7 @@ const error = ref('')
 async function loadItems() {
   error.value = ''
   try {
-    items.value = await ItemService.getAllItems()
+    items.value = await ItemService.getItems()
   } catch (e) {
     error.value = e.message || 'Failed to load'
   }
