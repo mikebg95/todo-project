@@ -1,10 +1,8 @@
-# backend/Dockerfile
-
 # ---------- Build stage ----------
-FROM maven:3.9-amazoncorretto-17 AS build
+FROM maven:3.9-eclipse-temurin-25 AS build
 WORKDIR /src
 
-# cache deps first
+# cache dependencies first
 COPY pom.xml .
 RUN mvn -q -B -DskipTests dependency:go-offline
 
@@ -13,14 +11,13 @@ COPY src ./src
 RUN mvn -q -B -DskipTests package
 
 # ---------- Runtime stage ----------
-FROM amazoncorretto:17
+FROM eclipse-temurin:25-jre
 WORKDIR /app
 
 # copy the built jar from the build stage
-# (matches whatever your artifact name is)
 COPY --from=build /src/target/*.jar /app/app.jar
 
-# run as non-root (same as you had)
+# run as non-root
 USER 10001:10001
 
 EXPOSE 8082
