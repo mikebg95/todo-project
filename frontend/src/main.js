@@ -26,7 +26,8 @@ keycloak
     .init({
         onLoad: "check-sso",
         pkceMethod: "S256",
-        checkLoginIframe: false
+        checkLoginIframe: false,
+        silentCheckSsoRedirectUri: `${window.location.origin}/silent-check-sso.html`, // redirect to silent-check-sso.html
     })
     .then(() => {
         const userStore = useUserStore();
