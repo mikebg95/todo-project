@@ -7,3 +7,4 @@ logging:
   level:
     org.springframework.security: DEBUG
     org.springframework.security.oauth2: DEBUG
+    com.example.todoapp.aop: INFO

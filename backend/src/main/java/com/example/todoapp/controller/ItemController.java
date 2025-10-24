@@ -1,5 +1,6 @@
 package com.example.todoapp.controller;
 
+import com.example.todoapp.aop.LogExecutionTime;
 import com.example.todoapp.model.Item;
 import com.example.todoapp.repository.ItemRepository;
 import com.example.todoapp.security.CurrentUserService;
@@ -11,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+@LogExecutionTime
 @RestController
 @RequestMapping("/items")
 public class ItemController {
