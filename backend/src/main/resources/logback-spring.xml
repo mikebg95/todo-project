@@ -1,38 +1,54 @@
 <configuration>
-    <property name="LOG_DIR" value="logs"/>
 
-    <!-- General app logs (daily rotation, 10 days) -->
-    <appender name="APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/app.log</file>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_DIR}/app-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>10</maxHistory>
-        </rollingPolicy>
-    </appender>
+    <!-- LOCAL profile: keep your rolling log files -->
+    <springProfile name="local">
+        <property name="LOG_DIR" value="logs"/>
 
-    <!-- Performance/AOP logs only (daily rotation, 10 days) -->
-    <appender name="PERF" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/performance.log</file>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %logger{36} - %msg%n</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_DIR}/performance-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>10</maxHistory>
-        </rollingPolicy>
-    </appender>
+        <appender name="APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_DIR}/app.log</file>
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
+            </encoder>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_DIR}/app-%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>10</maxHistory>
+            </rollingPolicy>
+        </appender>
 
-    <!-- Root → general app log -->
-    <root level="INFO">
-        <appender-ref ref="APP"/>
-    </root>
+        <appender name="PERF" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_DIR}/performance.log</file>
+            <encoder>
+                <pattern>%d{HH:mm:ss.SSS} %logger{36} - %msg%n</pattern>
+            </encoder>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_DIR}/performance-%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>10</maxHistory>
+            </rollingPolicy>
+        </appender>
 
-    <!-- Send ONLY AOP timing logs to performance.log -->
-    <!-- Use the class name for just this aspect, or the package for all AOP logs -->
-    <logger name="com.example.todoapp.aop.ExecutionTimeAspect" level="INFO" additivity="false">
-        <appender-ref ref="PERF"/>
-    </logger>
+        <root level="INFO">
+            <appender-ref ref="APP"/>
+        </root>
+
+        <logger name="com.example.todoapp.aop.ExecutionTimeAspect" level="INFO" additivity="false">
+            <appender-ref ref="PERF"/>
+        </logger>
+    </springProfile>
+
+
+    <!-- PROD profile: only console logging -->
+    <springProfile name="dev">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+
+        <logger name="com.example.todoapp.aop.ExecutionTimeAspect" level="INFO"/>
+    </springProfile>
+
 </configuration>
