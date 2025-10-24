@@ -38,15 +38,15 @@ class ItemControllerTest {
     private CurrentUserService currentUserService;
 
     // ---------- GET /items ----------
+    // Note: Controller uses findAll() and relies on @PostFilter for per-user filtering,
+    // which is disabled in this test via addFilters = false. So we verify findAll().
 
     @Test
-    void getAllItems_returnsOnlyCurrentUsersItems() throws Exception {
-        given(currentUserService.getUserId()).willReturn(USER_ID);
-
+    void getAllItems_returnsAllItemsWhenFiltersDisabled() throws Exception {
         Item i1 = Item.of("Buy milk", USER_ID); i1.setId("1");
         Item i2 = Item.of("Walk dog", USER_ID); i2.setId("2");
 
-        given(itemRepository.findByOwnerId(USER_ID)).willReturn(List.of(i1, i2));
+        given(itemRepository.findAll()).willReturn(List.of(i1, i2));
 
         mockMvc.perform(get("/items"))
                 .andExpect(status().isOk())
@@ -57,32 +57,33 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$[1].id").value("2"))
                 .andExpect(jsonPath("$[1].text").value("Walk dog"));
 
-        verify(itemRepository).findByOwnerId(USER_ID);
+        verify(itemRepository).findAll();
+        verifyNoInteractions(currentUserService);
     }
 
     @Test
     void getAllItems_returnsEmptyArrayWhenNoneExist() throws Exception {
-        given(currentUserService.getUserId()).willReturn(USER_ID);
-        given(itemRepository.findByOwnerId(USER_ID)).willReturn(List.of());
+        given(itemRepository.findAll()).willReturn(List.of());
 
         mockMvc.perform(get("/items"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.length()").value(0));
 
-        verify(itemRepository).findByOwnerId(USER_ID);
+        verify(itemRepository).findAll();
+        verifyNoInteractions(currentUserService);
     }
 
     @Test
     void getAllItems_returns500WhenRepositoryThrows() throws Exception {
-        given(currentUserService.getUserId()).willReturn(USER_ID);
-        given(itemRepository.findByOwnerId(USER_ID)).willThrow(new RuntimeException("boom"));
+        given(itemRepository.findAll()).willThrow(new RuntimeException("boom"));
 
         mockMvc.perform(get("/items"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
 
-        verify(itemRepository).findByOwnerId(USER_ID);
+        verify(itemRepository).findAll();
+        verifyNoInteractions(currentUserService);
     }
 
     // ---------- POST /items ----------
@@ -90,7 +91,6 @@ class ItemControllerTest {
     @Test
     void addItem_setsOwnerIdFromCurrentUser() throws Exception {
         given(currentUserService.getUserId()).willReturn(USER_ID);
-        // Let save echo the entity back (optional)
         ArgumentCaptor<Item> captor = ArgumentCaptor.forClass(Item.class);
         given(itemRepository.save(any(Item.class))).willAnswer(inv -> inv.getArgument(0));
 
