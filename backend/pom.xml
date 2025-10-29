@@ -68,6 +68,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.42</version>  <!-- example -->
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Testcontainers -->
         <dependency>
@@ -95,6 +101,7 @@
                 <version>3.14.0</version>
                 <configuration>
                     <release>25</release>
+                    <parameters>true</parameters>
                 </configuration>
             </plugin>
         </plugins>

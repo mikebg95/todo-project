@@ -1,14 +1,13 @@
 package com.example.todoapp.controller;
 
 import com.example.todoapp.aop.LogExecutionTime;
+import com.example.todoapp.aop.RequireOwner;
 import com.example.todoapp.model.Item;
 import com.example.todoapp.repository.ItemRepository;
 import com.example.todoapp.security.CurrentUserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -39,16 +38,9 @@ public class ItemController {
     }
 
     // delete item
+    @RequireOwner
     @DeleteMapping("/{id}")
     public void deleteItem(@PathVariable String id) {
-        Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found"));
-        String userId = currentUserService.getUserId();
-
-        if (!item.getOwnerId().equals(userId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not your item");
-        }
-
         itemRepository.deleteById(id);
     }
 
