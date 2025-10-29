@@ -1,29 +1,30 @@
 package com.example.todoapp;
 
+import com.example.todoapp.aop.RequireOwnerAspect;
 import com.example.todoapp.controller.ItemController;
 import com.example.todoapp.model.Item;
 import com.example.todoapp.repository.ItemRepository;
 import com.example.todoapp.security.CurrentUserService;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(ItemController.class)
+@Import({RequireOwnerAspect.class, AopAutoConfiguration.class})
 class ItemControllerTest {
 
     private static final String USER_ID = "user-123";
@@ -38,15 +39,13 @@ class ItemControllerTest {
     private CurrentUserService currentUserService;
 
     // ---------- GET /items ----------
-    // Note: Controller uses findAll() and relies on @PostFilter for per-user filtering,
-    // which is disabled in this test via addFilters = false. So we verify findAll().
 
     @Test
     void getAllItems_returnsAllItemsWhenFiltersDisabled() throws Exception {
         Item i1 = Item.of("Buy milk", USER_ID); i1.setId("1");
         Item i2 = Item.of("Walk dog", USER_ID); i2.setId("2");
 
-        given(itemRepository.findAll()).willReturn(List.of(i1, i2));
+        when(itemRepository.findAll()).thenReturn(List.of(i1, i2));
 
         mockMvc.perform(get("/items"))
                 .andExpect(status().isOk())
@@ -63,7 +62,7 @@ class ItemControllerTest {
 
     @Test
     void getAllItems_returnsEmptyArrayWhenNoneExist() throws Exception {
-        given(itemRepository.findAll()).willReturn(List.of());
+        when(itemRepository.findAll()).thenReturn(List.of());
 
         mockMvc.perform(get("/items"))
                 .andExpect(status().isOk())
@@ -76,7 +75,7 @@ class ItemControllerTest {
 
     @Test
     void getAllItems_returns500WhenRepositoryThrows() throws Exception {
-        given(itemRepository.findAll()).willThrow(new RuntimeException("boom"));
+        when(itemRepository.findAll()).thenThrow(new RuntimeException("boom"));
 
         mockMvc.perform(get("/items"))
                 .andExpect(status().isInternalServerError())
@@ -90,15 +89,15 @@ class ItemControllerTest {
 
     @Test
     void addItem_setsOwnerIdFromCurrentUser() throws Exception {
-        given(currentUserService.getUserId()).willReturn(USER_ID);
-        ArgumentCaptor<Item> captor = ArgumentCaptor.forClass(Item.class);
-        given(itemRepository.save(any(Item.class))).willAnswer(inv -> inv.getArgument(0));
+        when(currentUserService.getUserId()).thenReturn(USER_ID);
+        when(itemRepository.save(any(Item.class))).thenAnswer(inv -> inv.getArgument(0));
 
         mockMvc.perform(post("/items")
                         .contentType(MediaType.TEXT_PLAIN)
                         .content("Read book"))
                 .andExpect(status().isOk());
 
+        var captor = org.mockito.ArgumentCaptor.forClass(Item.class);
         verify(itemRepository).save(captor.capture());
         Item saved = captor.getValue();
         assertThat(saved.getText()).isEqualTo("Read book");
@@ -106,12 +105,12 @@ class ItemControllerTest {
     }
 
     // ---------- DELETE /items/{id} ----------
+    // Note: Ownership is enforced by the @RequireOwner aspect, which calls existsByIdAndOwnerId.
 
     @Test
     void deleteItem_allowsOwner() throws Exception {
-        given(currentUserService.getUserId()).willReturn(USER_ID);
-        Item item = Item.of("X", USER_ID); item.setId("abc");
-        given(itemRepository.findById("abc")).willReturn(Optional.of(item));
+        when(currentUserService.getUserId()).thenReturn(USER_ID);
+        when(itemRepository.existsByIdAndOwnerId("abc", USER_ID)).thenReturn(true);
 
         mockMvc.perform(delete("/items/abc"))
                 .andExpect(status().isOk());
@@ -120,21 +119,20 @@ class ItemControllerTest {
     }
 
     @Test
-    void deleteItem_forbiddenForNonOwner() throws Exception {
-        given(currentUserService.getUserId()).willReturn(USER_ID);
-        Item item = Item.of("X", "someone-else"); item.setId("abc");
-        given(itemRepository.findById("abc")).willReturn(Optional.of(item));
+    void deleteItem_forbiddenForNonOwner_returns404FromAspect() throws Exception {
+        when(currentUserService.getUserId()).thenReturn(USER_ID);
+        when(itemRepository.existsByIdAndOwnerId("abc", USER_ID)).thenReturn(false);
 
         mockMvc.perform(delete("/items/abc"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isNotFound());
 
         verify(itemRepository, never()).deleteById(anyString());
     }
 
     @Test
-    void deleteItem_notFoundWhenMissing() throws Exception {
-        given(currentUserService.getUserId()).willReturn(USER_ID);
-        given(itemRepository.findById("missing")).willReturn(Optional.empty());
+    void deleteItem_notFoundWhenMissing_returns404FromAspect() throws Exception {
+        when(currentUserService.getUserId()).thenReturn(USER_ID);
+        when(itemRepository.existsByIdAndOwnerId("missing", USER_ID)).thenReturn(false);
 
         mockMvc.perform(delete("/items/missing"))
                 .andExpect(status().isNotFound());
