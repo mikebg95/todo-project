@@ -2,6 +2,7 @@ package com.example.todoapp.controller;
 
 import com.example.todoapp.aop.LogExecutionTime;
 import com.example.todoapp.aop.RequireOwner;
+import com.example.todoapp.dto.ItemCreateRequest;
 import com.example.todoapp.model.Item;
 import com.example.todoapp.repository.ItemRepository;
 import com.example.todoapp.security.CurrentUserService;
@@ -29,9 +30,9 @@ public class ItemController {
 
     // add item
     @PostMapping
-    public void addItem(@RequestBody String text) {
+    public void addItem(@RequestBody ItemCreateRequest itemCreateRequest) {
         String userId = currentUserService.getUserId();
-        itemRepository.save(Item.of(text, userId));
+        itemRepository.save(Item.of(itemCreateRequest.getText(), userId));
     }
 
     // delete item
