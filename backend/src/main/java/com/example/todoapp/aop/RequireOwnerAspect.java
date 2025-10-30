@@ -19,15 +19,10 @@ import java.util.List;
 
 @Aspect
 @Component
-//@RequiredArgsConstructor // doesnt work for some reason
+@RequiredArgsConstructor
 public class RequireOwnerAspect {
     private final ItemRepository itemRepository;
     private final CurrentUserService currentUserService;
-
-    public RequireOwnerAspect(ItemRepository itemRepository, CurrentUserService currentUserService) {
-        this.itemRepository = itemRepository;
-        this.currentUserService = currentUserService;
-    }
 
     @Before("@annotation(requireOwner)")
     public void verifyOwnership(JoinPoint jp, RequireOwner requireOwner) {

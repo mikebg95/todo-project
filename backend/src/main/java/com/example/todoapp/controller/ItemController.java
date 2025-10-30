@@ -5,6 +5,7 @@ import com.example.todoapp.aop.RequireOwner;
 import com.example.todoapp.model.Item;
 import com.example.todoapp.repository.ItemRepository;
 import com.example.todoapp.security.CurrentUserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,15 +14,11 @@ import java.util.List;
 
 @LogExecutionTime
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/items")
 public class ItemController {
     private final CurrentUserService currentUserService;
     private final ItemRepository itemRepository;
-
-    public ItemController(CurrentUserService currentUserService, ItemRepository itemRepository) {
-        this.currentUserService = currentUserService;
-        this.itemRepository = itemRepository;
-    }
 
     // get all items for user
     @GetMapping

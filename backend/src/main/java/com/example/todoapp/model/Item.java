@@ -1,5 +1,8 @@
 package com.example.todoapp.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -8,6 +11,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Document(collection = "items") // mongodb collection name
 public class Item {
     @Id
@@ -23,7 +29,6 @@ public class Item {
     @LastModifiedDate
     private Instant updatedAt;
 
-    public Item() {}
     public Item(String text) {
         this.text = text;
     }
@@ -45,45 +50,5 @@ public class Item {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }
