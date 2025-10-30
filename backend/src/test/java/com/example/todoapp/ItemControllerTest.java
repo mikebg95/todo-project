@@ -2,9 +2,11 @@ package com.example.todoapp;
 
 import com.example.todoapp.aop.RequireOwnerAspect;
 import com.example.todoapp.controller.ItemController;
+import com.example.todoapp.dto.ItemCreateRequest;
 import com.example.todoapp.model.Item;
 import com.example.todoapp.repository.ItemRepository;
 import com.example.todoapp.security.CurrentUserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -31,6 +33,9 @@ class ItemControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockitoBean
     private ItemRepository itemRepository;
@@ -92,9 +97,11 @@ class ItemControllerTest {
         when(currentUserService.getUserId()).thenReturn(USER_ID);
         when(itemRepository.save(any(Item.class))).thenAnswer(inv -> inv.getArgument(0));
 
+        ItemCreateRequest req = new ItemCreateRequest("Read book");
+
         mockMvc.perform(post("/items")
-                        .contentType(MediaType.TEXT_PLAIN)
-                        .content("Read book"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
 
         var captor = org.mockito.ArgumentCaptor.forClass(Item.class);
@@ -105,7 +112,6 @@ class ItemControllerTest {
     }
 
     // ---------- DELETE /items/{id} ----------
-    // Note: Ownership is enforced by the @RequireOwner aspect, which calls existsByIdAndOwnerId.
 
     @Test
     void deleteItem_allowsOwner() throws Exception {
