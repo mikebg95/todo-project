@@ -1,42 +1,6 @@
 <configuration>
 
-    <!-- LOCAL profile: keep your rolling log files -->
-    <springProfile name="local">
-        <property name="LOG_DIR" value="logs"/>
-
-        <appender name="APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOG_DIR}/app.log</file>
-            <encoder>
-                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
-            </encoder>
-            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                <fileNamePattern>${LOG_DIR}/app-%d{yyyy-MM-dd}.log</fileNamePattern>
-                <maxHistory>10</maxHistory>
-            </rollingPolicy>
-        </appender>
-
-        <appender name="PERF" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOG_DIR}/performance.log</file>
-            <encoder>
-                <pattern>%d{HH:mm:ss.SSS} %logger{36} - %msg%n</pattern>
-            </encoder>
-            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                <fileNamePattern>${LOG_DIR}/performance-%d{yyyy-MM-dd}.log</fileNamePattern>
-                <maxHistory>10</maxHistory>
-            </rollingPolicy>
-        </appender>
-
-        <root level="INFO">
-            <appender-ref ref="APP"/>
-        </root>
-
-        <logger name="com.example.todoapp.aop.ExecutionTimeAspect" level="INFO" additivity="false">
-            <appender-ref ref="PERF"/>
-        </logger>
-    </springProfile>
-
-
-    <!-- PROD profile: only console logging -->
+    <!-- DEV profile: console only -->
     <springProfile name="dev">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
@@ -49,6 +13,44 @@
         </root>
 
         <logger name="com.example.todoapp.aop.ExecutionTimeAspect" level="INFO"/>
+    </springProfile>
+
+
+    <!-- LOCAL profile: normal logs -> console, performance logs -> file + archived daily -->
+    <springProfile name="local">
+        <property name="LOG_DIR" value="logs"/>
+        <property name="PERF_ARCHIVE_DIR" value="${LOG_DIR}/performance-archive"/>
+
+        <!-- Console for normal app logs -->
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <!-- Rolling file for performance logs -->
+        <appender name="PERF" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_DIR}/performance.log</file>
+            <encoder>
+                <pattern>%d{HH:mm:ss.SSS} %logger{36} - %msg%n</pattern>
+            </encoder>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${PERF_ARCHIVE_DIR}/performance-%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>30</maxHistory>
+                <totalSizeCap>1GB</totalSizeCap>
+                <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            </rollingPolicy>
+        </appender>
+
+        <!-- Normal (non-performance) logs go to console -->
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+
+        <!-- Performance logs go ONLY to the PERF file (not console) -->
+        <logger name="com.example.todoapp.aop.ExecutionTimeAspect" level="INFO" additivity="false">
+            <appender-ref ref="PERF"/>
+        </logger>
     </springProfile>
 
 </configuration>
