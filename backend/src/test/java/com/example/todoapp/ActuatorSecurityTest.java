@@ -14,8 +14,8 @@ import static org.assertj.core.api.Assertions.assertThat;
                 "management.server.port=0",
                 "management.endpoints.web.exposure.include=health,info,metrics",
                 "spring.security.oauth2.resourceserver.jwt.jwk-set-uri=http://dummy",
-                "actuator.username=admin",
-                "actuator.password=admin"
+                "actuator.username=${ACTUATOR_USERNAME:admin}",
+                "actuator.password=${ACTUATOR_PASSWORD:admin}"
         }
 )
 class ActuatorSecurityTest {
@@ -48,7 +48,9 @@ class ActuatorSecurityTest {
 
     @Test
     void metrics_allowsWithBasicAuth() {
-        var authed = new TestRestTemplate("admin", "admin");
+        var authed = new TestRestTemplate(
+                env.getProperty("actuator.username", "admin"),
+                env.getProperty("actuator.password", "admin"));
         var resp = authed.getForEntity(actuatorUrl("/actuator/metrics"), String.class);
         assertThat(resp.getStatusCode().value()).isEqualTo(200);
     }
