@@ -24,6 +24,9 @@ jobs:
           java-version: '25'
           cache: maven
       - name: Build & Test Backend
+        env:
+          ACTUATOR_USERNAME: ${{ secrets.ACTUATOR_USERNAME }}
+          ACTUATOR_PASSWORD: ${{ secrets.ACTUATOR_PASSWORD }}
         run: mvn -B -ntp clean verify -Dspring.profiles.active=dev
 
   build-test-frontend:
@@ -77,6 +80,9 @@ jobs:
 
     - name: Build & push backend image
       uses: docker/build-push-action@v5
+      env:
+        ACTUATOR_USERNAME: ${{ secrets.ACTUATOR_USERNAME }}
+        ACTUATOR_PASSWORD: ${{ secrets.ACTUATOR_PASSWORD }}
       with: 
         context: ./backend
         push: true
