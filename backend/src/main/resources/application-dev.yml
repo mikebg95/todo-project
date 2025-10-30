@@ -7,3 +7,13 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: https://keycloak.michaelgoldman.dev/realms/todo-project-realm
+management:
+  server:
+    address: 0.0.0.0
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+actuator:
+  username: ${ACTUATOR_USERNAME}
+  password: ${ACTUATOR_PASSWORD}
