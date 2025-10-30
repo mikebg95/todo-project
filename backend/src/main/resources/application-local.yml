@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://admin:pass@localhost:27017/todosdb?authSource=admin
+      uri: mongodb://admin:admin@localhost:27017/todosdb?authSource=admin
   security:
     oauth2:
       resourceserver:
