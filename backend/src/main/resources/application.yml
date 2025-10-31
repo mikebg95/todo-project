@@ -8,3 +8,11 @@ logging:
     org.springframework.security: DEBUG
     org.springframework.security.oauth2: DEBUG
     com.example.todoapp.aop: INFO
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,health
+actuator:
+  username: ${ACTUATOR_USERNAME:admin}
+  password: ${ACTUATOR_USERNAME:admin}
