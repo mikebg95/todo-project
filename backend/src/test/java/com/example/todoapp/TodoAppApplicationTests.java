@@ -8,7 +8,14 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-@SpringBootTest
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = {
+                "spring.security.oauth2.resourceserver.jwt.jwk-set-uri=http://dummy",
+                "actuator.username=${ACTUATOR_USERNAME:admin}",
+                "actuator.password=${ACTUATOR_PASSWORD:admin}"
+        }
+)
 @Testcontainers
 class TodoAppApplicationTests {
 
