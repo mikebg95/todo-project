@@ -1,6 +1,6 @@
 spring:
   application:
-    name: todo-app@
+    name: todo-app
 server:
   port: ${PORT:8080}
   servlet:
@@ -11,13 +11,7 @@ logging:
     org.springframework.security.oauth2: DEBUG
     com.example.todoapp.aop: INFO
 management:
-  server:
-    port: 9090
-    spring:
-      web:
-        mvc:
-          servlet:
-            path=/api:
-#actuator:
-#  username: ${ACTUATOR_USERNAME:admin}
-#  password: ${ACTUATOR_PASSWORD:admin}
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
