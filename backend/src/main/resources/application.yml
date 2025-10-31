@@ -2,7 +2,7 @@ spring:
   application:
     name: todo-app@
 server:
-  port: 8082
+  port: ${PORT:8080}
   servlet:
     context-path: /api
 logging:
