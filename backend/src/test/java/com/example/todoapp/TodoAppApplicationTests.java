@@ -9,7 +9,14 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-@SpringBootTest
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = {
+                "spring.security.oauth2.resourceserver.jwt.jwk-set-uri=http://dummy",
+                "actuator.username=admin",
+                "actuator.password=admin"
+        }
+)
 class TodoAppApplicationTests {
 
     @Container
