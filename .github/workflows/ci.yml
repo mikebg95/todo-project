@@ -24,6 +24,9 @@ jobs:
           java-version: '25'
           cache: maven
       - name: Build & Test Backend
+        env:
+          ACTUATOR_USERNAME: ${{ secrets.ACTUATOR_USERNAME }}
+          ACTUATOR_PASSWORD: ${{ secrets.ACTUATOR_PASSWORD }}
         run: mvn -B -ntp clean verify -Dspring.profiles.active=dev
 
   build-test-frontend:
