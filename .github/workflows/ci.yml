@@ -27,6 +27,7 @@ jobs:
         env:
           ACTUATOR_USERNAME: ${{ secrets.ACTUATOR_USERNAME }}
           ACTUATOR_PASSWORD: ${{ secrets.ACTUATOR_PASSWORD }}
+          SPRING_DATA_MONGODB_URI: ${{ secrets.SPRING_DATA_MONGODB_URI }}
         run: mvn -B -ntp clean verify -Dspring.profiles.active=dev
 
   build-test-frontend:
