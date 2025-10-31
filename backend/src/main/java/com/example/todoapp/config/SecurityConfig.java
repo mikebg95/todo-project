@@ -19,8 +19,22 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private final JwtAuthConverter jwtAuthConverter;
 
+    // Swagger & OpenAPI docs - public access
+    @Bean
+    @Order(0)
+    public SecurityFilterChain swaggerChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**")
+                .authorizeHttpRequests(a -> a.anyRequest().permitAll())
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        return http.build();
+    }
+
+    // Actuator - health public, rest requires ACTUATOR role via basic auth
     @Bean
     @Order(1)
     public SecurityFilterChain actuatorChain(HttpSecurity http) throws Exception {
@@ -36,23 +50,21 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // API - everything else secured by Keycloak JWT
     @Bean
     @Order(2)
     public SecurityFilterChain apiChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(reg -> reg
-                        .requestMatchers("/**").authenticated()
-                        .anyRequest().denyAll()
-                )
+                .authorizeHttpRequests(reg -> reg.anyRequest().authenticated())
                 .oauth2ResourceServer(oauth ->
                         oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter))
                 );
         return http.build();
     }
 
-    // basic user for actuator
+    // Basic user for actuator
     @Bean
     public UserDetailsService actuatorUser(
             @Value("${actuator.username}") String username,

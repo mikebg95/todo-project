@@ -10,3 +10,10 @@ spring:
 actuator:
   username: ${ACTUATOR_USERNAME}
   password: ${ACTUATOR_PASSWORD}
+
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: "todo-project-client"
+      use-pkce-with-authorization-code-grant: true
+    oauth2-redirect-url: "https://todo-backend-w132.onrender.com/swagger-ui/oauth2-redirect.html"
