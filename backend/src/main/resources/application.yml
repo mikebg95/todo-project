@@ -13,8 +13,6 @@ logging:
 management:
   server:
     port: 9090
-
-
     spring:
       web:
         mvc:

@@ -13,7 +13,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus
+        include: health,info,metrics
 actuator:
   username: ${ACTUATOR_USERNAME}
   password: ${ACTUATOR_PASSWORD}
