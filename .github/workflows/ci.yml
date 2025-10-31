@@ -6,7 +6,7 @@ permissions:
 
 on: 
   push:
-    branches: ['main', 'restore-working-state']
+    branches: ['main', 'restore-working-state', 'feat/actuator2']
   workflow_dispatch:
 
 jobs:
